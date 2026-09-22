@@ -2,6 +2,6 @@ package-as: PaddleSlots
 
 ignore:
   - assets
-  - README.md
+  - .gitattributes
   - .gitignore
   - .pkgmeta

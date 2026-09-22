@@ -1,6 +1,6 @@
 ## Interface: 16001
 ## Title: PaddleSlots
-## Notes: Xbox Elite paddle action panels styled after WoW: Forever's native gamepad crossbar.
+## Notes: Rear-paddle action panels (Xbox Elite, DualSense Edge) styled after WoW: Forever's native gamepad crossbar.
 ## Author: SillyNameRandomNumber
 ## Version: 0.7.3
 ## IconTexture: Interface\AddOns\PaddleSlots\Media\Icon.tga

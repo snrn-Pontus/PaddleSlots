@@ -1,6 +1,6 @@
 # PaddleSlots
 
-Xbox Elite rear-paddle action panels for **WoW: Forever**, nested in the native gamepad crossbar.
+Rear-paddle action panels for **WoW: Forever**, nested in the native gamepad crossbar. Built for the Xbox Elite Series 2; also works with the PlayStation DualSense Edge and any other controller whose extra buttons can be mapped to keys on PC.
 
 ![PaddleSlots panels inside the Forever crossbar](screenshots/ui.png)
 
@@ -10,7 +10,7 @@ Built for **World of Warcraft: Forever** only (Interface 16001). It relies on Fo
 
 ## Quick start
 
-1. Map each paddle to a key WoW does not use. Xbox Accessories app: paddle to F9, F10, F11, F12. Steam Input or reWASD: paddle to F13, F14, F15, F16.
+1. Map each paddle to a key WoW does not use. Xbox Elite with the Xbox Accessories app: paddle to F9, F10, F11, F12. Steam Input or reWASD (Xbox Elite, DualSense Edge, others): paddle to F13, F14, F15, F16.
 2. In game open **Settings > AddOns > PaddleSlots** (or type `/paddles`), click **Assign P1-P4** and press each paddle in turn.
 3. Drag spells, items or macros onto the paddle slots. Hold LT, RT or both to fill the other layers.
 
@@ -40,7 +40,7 @@ Options include:
 
 ## Paddle inputs
 
-On Windows the Xbox Elite Series 2 does not report its paddles to games. WoW only sees whatever the Xbox Accessories app (or Steam Input / reWASD) maps a paddle to, so PaddleSlots listens for a configurable input per paddle instead of assuming the native `PADPADDLE1-4` keys.
+On Windows the Xbox Elite Series 2 does not report its paddles to games, and the DualSense Edge's back buttons arrive as copies of the face buttons. WoW only sees whatever the Xbox Accessories app, Steam Input or reWASD maps a paddle to, so PaddleSlots listens for a configurable input per paddle instead of assuming the native `PADPADDLE1-4` keys.
 
 PaddleSlots never takes over a button the native gamepad UI uses. **Settings -> AddOns -> PaddleSlots -> Paddle inputs** shows one row per paddle whose button reads the current input; click it and press the paddle to assign a new one. Accepted inputs are only ones WoW does not use:
 
@@ -55,6 +55,8 @@ Two routes:
 
 1. **Xbox Accessories keyboard mapping**: map each paddle to a real key WoW leaves unbound (F9-F12 on a compact keyboard; also F6-F8, Page Up/Down, Scroll Lock, Pause, or Numpad keys), then use Assign by pressing. Share also works for one paddle if the app offers it.
 2. **Steam Input or reWASD**: install Steam's Xbox Extended Feature Support driver (or use reWASD), map the paddles to F13-F16, leave them unassigned in Xbox Accessories, and select Keyboard F13-F16 in the addon. All four paddles work and the native layout stays intact. If a paddle press flips the UI to mouse-and-keyboard mode, pin the interface style to gamepad in the game's controls settings.
+
+**PlayStation DualSense Edge**: Sony has no PC app for the Edge, and without a profile the back buttons and Fn buttons just repeat face buttons (Steam shows them as Circle and Cross, so the addon refuses them). Steam Input and reWASD do see the back buttons as their own inputs: add WoW as a non-Steam game, enable PlayStation controller support in Steam's controller settings, bind the two back buttons (and, if you like, the two Fn buttons) to F13-F16, and use route 2 above. A PS5 is not needed for this; the Edge's own profiles only matter if you also want them on the console.
 
 The client's own default config for the Elite Series 2 (vendor 1118, product 767) maps raw buttons 16-19 to PADPADDLE1-4, but the controller never sends them on Windows. `/paddles test` shows raw presses; `/paddles learn` is only useful for controllers whose paddles arrive on other raw indices.
 

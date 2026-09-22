@@ -2,7 +2,7 @@
 
 **Four extra action slots for your controller's rear paddles, built into WoW: Forever's native gamepad crossbar.**
 
-Forever's crossbar gives you the d-pad and the face buttons on four layers (no trigger, LT, RT, LT + RT). PaddleSlots adds a fifth group to each of those layers: a 2 x 2 grid for the P1 to P4 paddles of an Xbox Elite or any other controller with extra buttons. That is 16 more actions, all reachable without taking your thumbs off the sticks.
+Forever's crossbar gives you the d-pad and the face buttons on four layers (no trigger, LT, RT, LT + RT). PaddleSlots adds a fifth group to each of those layers: a 2 x 2 grid for the P1 to P4 paddles of an Xbox Elite Series 2, the back buttons of a PlayStation DualSense Edge, or any other controller whose extra buttons can be mapped to keys on PC. That is 16 more actions, all reachable without taking your thumbs off the sticks.
 
 ![Paddle panels nested in the native crossbar](SCREENSHOT_1_URL)
 
@@ -19,18 +19,19 @@ Forever's crossbar gives you the d-pad and the face buttons on four layers (no t
 
 ## Works with what your controller actually sends
 
-On Windows the Xbox Elite Series 2 does not report its paddles to games. WoW only sees whatever the Xbox Accessories app, Steam Input or reWASD maps a paddle to. PaddleSlots handles that instead of pretending the paddles exist:
+On Windows the Xbox Elite Series 2 does not report its paddles to games, and the DualSense Edge's back buttons arrive as copies of the face buttons. WoW only sees whatever the Xbox Accessories app, Steam Input or reWASD maps a paddle to. PaddleSlots handles that instead of pretending the paddles exist:
 
 - **Assign by pressing**: open the settings, click a paddle row, press the paddle. Whatever the controller sends is assigned.
 - It refuses inputs the native gamepad UI already uses (A, B, X, Y, d-pad, bumpers, triggers, stick clicks, View, Menu), so a paddle can never steal a button. If your profile mirrors a paddle to A, the prompt tells you and keeps waiting.
 - Accepts unbound keyboard keys (F9 to F12, F13 to F24, Page Up / Down, Numpad and so on), the Share button, or real PADPADDLE keys on controllers that report them.
 - An in-game **Setup guide** walks through both routes (Xbox Accessories keyboard mapping, or Steam Input / reWASD with F13 to F16) and shows a live "last input detected" line.
+- **DualSense Edge**: Steam Input or reWASD see its back buttons as separate inputs, so bind them to F13 to F16 there and use the Steam route. No PS5 is needed.
 
 ![Settings page](SCREENSHOT_3_URL)
 
 ## Setup in three steps
 
-1. Map each paddle to a key WoW does not use. Xbox Accessories: paddle to F9, F10, F11, F12. Steam Input or reWASD: paddle to F13, F14, F15, F16.
+1. Map each paddle to a key WoW does not use. Xbox Elite with Xbox Accessories: paddle to F9, F10, F11, F12. Steam Input or reWASD (Xbox Elite, DualSense Edge, others): paddle to F13, F14, F15, F16.
 2. In game, open **Settings > AddOns > PaddleSlots** (or type `/paddles`) and click **Assign P1-P4**, then press each paddle in turn.
 3. Drag spells, items or macros onto the paddle slots. Hold LT, RT or both to fill the other layers.
 

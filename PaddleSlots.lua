@@ -2556,6 +2556,9 @@ local GUIDE_TEXT = table.concat({
     "|cffffd100Option 2: Steam Input or reWASD|r",
     "Same idea, but these tools can send keys that are not on your keyboard (F13-F24), which can never be pressed by accident. Steam: enable the Xbox Extended Feature Support driver under Settings > Controller, add WoW as a non-Steam game, map the paddles in its controller layout, and leave the paddles unassigned in Xbox Accessories.",
     "",
+    "|cffffd100PlayStation DualSense Edge|r",
+    "Without a profile the Edge's back buttons repeat face buttons, which the addon refuses. Steam Input and reWASD see them as their own inputs: enable PlayStation controller support in Steam, bind the back buttons (and Fn buttons if wanted) to F13-F16 in WoW's controller layout, then assign them here. No PS5 is needed.",
+    "",
     "The live line at the bottom shows what WoW receives for any press. If a paddle shows up as A, B, X, Y or another native button, the controller profile is still mirroring it and the addon will refuse it. If a paddle press switches the interface to mouse and keyboard mode, look for an interface style option under Settings > Controls and pin it to gamepad.",
 }, "\n")
 
@@ -2565,7 +2568,7 @@ local function EnsureGuideFrame()
     end
 
     local frame = CreateFrame("Frame", "PaddleSlotsGuideFrame", UIParent, "BackdropTemplate")
-    frame:SetSize(640, 640)
+    frame:SetSize(640, 700)
     frame:SetPoint("CENTER")
     frame:SetFrameStrata("DIALOG")
     frame:SetClampedToScreen(true)

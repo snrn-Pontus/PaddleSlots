@@ -1,0 +1,7 @@
+package-as: PaddleSlots
+
+ignore:
+  - assets
+  - README.md
+  - .gitignore
+  - .pkgmeta

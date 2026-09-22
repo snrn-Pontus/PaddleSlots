@@ -1,0 +1,72 @@
+# PaddleSlots
+
+**Four extra action slots for your controller's rear paddles, built into WoW: Forever's native gamepad crossbar.**
+
+Forever's crossbar gives you the d-pad and the face buttons on four layers (no trigger, LT, RT, LT + RT). PaddleSlots adds a fifth group to each of those layers: a 2 x 2 grid for the P1 to P4 paddles of an Xbox Elite or any other controller with extra buttons. That is 16 more actions, all reachable without taking your thumbs off the sticks.
+
+![Paddle panels nested in the native crossbar](SCREENSHOT_1_URL)
+
+## Looks and behaves like the native crossbar
+
+- Uses Blizzard's own crossbar art: circle slots, drop shadows, cooldown swipes, pressed state and the focus highlight.
+- The panel for the trigger combination you are holding expands and lights up exactly like the native bar does. The other three stay collapsed. Nothing is dimmed unless you want it to be.
+- Panels sit inside the crossbar next to the bar that uses the same triggers, and follow the crossbar if you move or scale it.
+- Respects the game's own gamepad settings for slot scaling, focus highlight and button prompts.
+- Paddle actions fire on press, like every other gamepad button.
+- Out-of-range and unusable feedback with the same colours as the native slots.
+
+![Focused LT + RT panel](SCREENSHOT_2_URL)
+
+## Works with what your controller actually sends
+
+On Windows the Xbox Elite Series 2 does not report its paddles to games. WoW only sees whatever the Xbox Accessories app, Steam Input or reWASD maps a paddle to. PaddleSlots handles that instead of pretending the paddles exist:
+
+- **Assign by pressing**: open the settings, click a paddle row, press the paddle. Whatever the controller sends is assigned.
+- It refuses inputs the native gamepad UI already uses (A, B, X, Y, d-pad, bumpers, triggers, stick clicks, View, Menu), so a paddle can never steal a button. If your profile mirrors a paddle to A, the prompt tells you and keeps waiting.
+- Accepts unbound keyboard keys (F9 to F12, F13 to F24, Page Up / Down, Numpad and so on), the Share button, or real PADPADDLE keys on controllers that report them.
+- An in-game **Setup guide** walks through both routes (Xbox Accessories keyboard mapping, or Steam Input / reWASD with F13 to F16) and shows a live "last input detected" line.
+
+![Settings page](SCREENSHOT_3_URL)
+
+## Setup in three steps
+
+1. Map each paddle to a key WoW does not use. Xbox Accessories: paddle to F9, F10, F11, F12. Steam Input or reWASD: paddle to F13, F14, F15, F16.
+2. In game, open **Settings > AddOns > PaddleSlots** (or type `/paddles`) and click **Assign P1-P4**, then press each paddle in turn.
+3. Drag spells, items or macros onto the paddle slots. Hold LT, RT or both to fill the other layers.
+
+## Moving the panels
+
+Open WoW's normal Edit Mode and the four panels become draggable, or tick **Unlock panels outside Edit Mode** in the settings. `/paddles reset` puts them back into the crossbar.
+
+## Options
+
+- Only show in gamepad mode
+- HUD scale
+- Inactive panel opacity
+- Focus highlight and its strength
+- LT / RT modifier prompts under the panels (off by default, the crossbar already shows them)
+- Paddle prompts on the focused panel
+- Print Diagnostics, for bug reports
+
+## Slash commands
+
+```
+/paddles              open settings
+/paddles assign [1-4] assign one paddle, or all four in order
+/paddles keys F13 F14 F15 F16
+/paddles reset        reset panel positions
+/paddles guide        open the setup guide
+/paddles test         print raw controller input for 30 seconds
+/paddles diag         print gamepad integration diagnostics
+```
+
+## Notes
+
+- Built for **World of Warcraft: Forever** only. It uses Forever's native crossbar and gamepad API and does nothing on other clients.
+- Actions are stored in the client's spare gamepad action storage when a safe block is free, so they survive like any other action bar. Otherwise they are kept in the addon's saved variables.
+- Layer switching in combat uses a secure state driver when Forever exposes LT and RT as distinct modifiers. `/paddles diag` reports which mode is active.
+- Not affiliated with ConsolePort. PaddleSlots does not replace the gamepad UI, it extends the one Forever ships.
+
+## Reporting problems
+
+Run `/paddles diag`, copy the output from chat, and post it with a description of your controller and mapping software. If the game crashed, attach the error file from the `Errors` folder next to the game executable.

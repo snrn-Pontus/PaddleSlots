@@ -1,0 +1,8 @@
+## Interface: 16001
+## Title: PaddleSlots
+## Notes: Xbox Elite paddle action panels styled after WoW: Forever's native gamepad crossbar.
+## Author: OpenAI
+## Version: 0.7.1
+## SavedVariables: PaddleSlotsDB
+
+PaddleSlots.lua

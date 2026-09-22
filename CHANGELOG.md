@@ -1,5 +1,9 @@
 # PaddleSlots changelog
 
+## 0.7.3 — Fix 0.7.2 failing to load
+
+0.7.2 did not load at all: the file's main chunk exceeded Lua's limit of 200 local variables ("main function has more than 200 local variables"). The slot layout constants now live in one `LAYOUT` table, which brings the count back to 184. No behaviour change beyond the 0.7.2 fix finally taking effect.
+
 ## 0.7.2 — Secret cooldown values
 
 Fixes a Lua error that fired repeatedly in combat on Forever once a paddle slot held an action:

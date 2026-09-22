@@ -10,24 +10,26 @@ local MIN_NATIVE_STORAGE_POOL = 48
 -- Slot metrics mirror Blizzard_GamepadActionBars/ActionBarStyles.lua so the
 -- paddle slots match the circle (face button) slots of the native crossbar.
 -- Bars that are not focused are "collapsed"; the focused bar is "expanded".
-local BUTTON_SIZE_COLLAPSED = 32
-local BUTTON_SIZE_EXPANDED = 40
-local BUTTON_PRESSED_SIZE_OFFSET = 4
-local SHADOW_DISTANCE_COLLAPSED = 4
-local SHADOW_DISTANCE_EXPANDED = 13
-local GRID_SPACING_COLLAPSED = 46
-local GRID_SPACING_EXPANDED = 56
-local GRID_CENTER_Y = 12
-local PROMPT_ICON_SIZE = 15
-local EMPTY_GLYPH_RATIO = 0.62
-local FOCUS_FADE_DURATION = 0.33
-local FOCUS_SHADOW_MIN_ALPHA = 0.4
-local FOCUS_BACKGROUND_ALPHA = 0.375
-local FOCUS_BACKGROUND_WIDTH = 190
-local FOCUS_BACKGROUND_HEIGHT = 176
-local MODIFIER_ICON_Y = -54
-local PANEL_WIDTH = 136
-local PANEL_HEIGHT = 152
+local LAYOUT = {
+    BUTTON_SIZE_COLLAPSED = 32,
+    BUTTON_SIZE_EXPANDED = 40,
+    BUTTON_PRESSED_SIZE_OFFSET = 4,
+    SHADOW_DISTANCE_COLLAPSED = 4,
+    SHADOW_DISTANCE_EXPANDED = 13,
+    GRID_SPACING_COLLAPSED = 46,
+    GRID_SPACING_EXPANDED = 56,
+    GRID_CENTER_Y = 12,
+    PROMPT_ICON_SIZE = 15,
+    EMPTY_GLYPH_RATIO = 0.62,
+    FOCUS_FADE_DURATION = 0.33,
+    FOCUS_SHADOW_MIN_ALPHA = 0.4,
+    FOCUS_BACKGROUND_ALPHA = 0.375,
+    FOCUS_BACKGROUND_WIDTH = 190,
+    FOCUS_BACKGROUND_HEIGHT = 176,
+    MODIFIER_ICON_Y = -54,
+    PANEL_WIDTH = 136,
+    PANEL_HEIGHT = 152,
+}
 
 -- Native crossbar art (Blizzard_GamepadActionBars). Every atlas has a fallback
 -- so the addon keeps working on builds that rename or remove one of them.
@@ -312,15 +314,15 @@ local function DefaultPanelPosition(panelIndex)
         relativeTo = NATIVE_CROSSBAR_FRAME,
         relativePoint = "CENTER",
         x = center.x,
-        -- The grid is drawn GRID_CENTER_Y above the panel's centre.
-        y = center.y - GRID_CENTER_Y,
+        -- The grid is drawn LAYOUT.GRID_CENTER_Y above the panel's centre.
+        y = center.y - LAYOUT.GRID_CENTER_Y,
     }
 end
 
 -- Positions used by 0.6 / 0.7: panels flanking the crossbar on both sides.
 local function LegacyDefaultPanelPosition(panelIndex)
-    local outer = 328 + 16 + (PANEL_WIDTH / 2)
-    local inner = outer + PANEL_WIDTH + 20
+    local outer = 328 + 16 + (LAYOUT.PANEL_WIDTH / 2)
+    local inner = outer + LAYOUT.PANEL_WIDTH + 20
     local offsets = { -inner, -outer, outer, inner }
     return { point = "BOTTOM", relativePoint = "BOTTOM", x = offsets[panelIndex] or 0, y = 40 }
 end
@@ -1226,9 +1228,9 @@ local function HideTooltip(button)
 end
 
 local function GetButtonCenter(paddleIndex, expanded)
-    local spacing = expanded and GRID_SPACING_EXPANDED or GRID_SPACING_COLLAPSED
+    local spacing = expanded and LAYOUT.GRID_SPACING_EXPANDED or LAYOUT.GRID_SPACING_COLLAPSED
     local cell = GRID_CELLS[paddleIndex]
-    return (cell.col - 0.5) * spacing, GRID_CENTER_Y + (0.5 - cell.row) * spacing
+    return (cell.col - 0.5) * spacing, LAYOUT.GRID_CENTER_Y + (0.5 - cell.row) * spacing
 end
 
 -- Positions and sizes the non-secure art of a slot. The secure click target
@@ -1241,19 +1243,19 @@ local function LayoutButtonVisual(button)
     end
 
     local expanded = panel.expanded == true
-    local size = expanded and BUTTON_SIZE_EXPANDED or BUTTON_SIZE_COLLAPSED
+    local size = expanded and LAYOUT.BUTTON_SIZE_EXPANDED or LAYOUT.BUTTON_SIZE_COLLAPSED
     local x, y = GetButtonCenter(button.paddleIndex, expanded)
     if button.pushed then
-        size = size - BUTTON_PRESSED_SIZE_OFFSET
-        y = y - (BUTTON_PRESSED_SIZE_OFFSET * 0.5)
+        size = size - LAYOUT.BUTTON_PRESSED_SIZE_OFFSET
+        y = y - (LAYOUT.BUTTON_PRESSED_SIZE_OFFSET * 0.5)
     end
 
     visual:SetSize(size, size)
     visual:ClearAllPoints()
     visual:SetPoint("CENTER", panel, "CENTER", x, y)
-    visual.emptyGlyph:SetSize(size * EMPTY_GLYPH_RATIO, size * EMPTY_GLYPH_RATIO)
+    visual.emptyGlyph:SetSize(size * LAYOUT.EMPTY_GLYPH_RATIO, size * LAYOUT.EMPTY_GLYPH_RATIO)
 
-    local shadowDistance = expanded and SHADOW_DISTANCE_EXPANDED or SHADOW_DISTANCE_COLLAPSED
+    local shadowDistance = expanded and LAYOUT.SHADOW_DISTANCE_EXPANDED or LAYOUT.SHADOW_DISTANCE_COLLAPSED
     for _, shadow in ipairs({ visual.shadow, visual.shadowFocus }) do
         shadow:ClearAllPoints()
         shadow:SetPoint("TOPLEFT", -shadowDistance, shadowDistance)
@@ -1283,7 +1285,7 @@ local function CreateActionButton(panelIndex, paddleIndex, panel)
     button.paddleIndex = paddleIndex
     button.pushed = false
     button.hasAction = false
-    button:SetSize(BUTTON_SIZE_EXPANDED, BUTTON_SIZE_EXPANDED)
+    button:SetSize(LAYOUT.BUTTON_SIZE_EXPANDED, LAYOUT.BUTTON_SIZE_EXPANDED)
     button:SetFrameLevel(panel:GetFrameLevel() + 10)
     button:RegisterForClicks("AnyUp", "AnyDown")
     button:RegisterForDrag("LeftButton")
@@ -1294,7 +1296,7 @@ local function CreateActionButton(panelIndex, paddleIndex, panel)
     -- frame so it can be resized and re-anchored while in combat.
     local visual = CreateFrame("Frame", nil, panel)
     visual:SetFrameLevel(panel:GetFrameLevel() + 5)
-    visual:SetSize(BUTTON_SIZE_COLLAPSED, BUTTON_SIZE_COLLAPSED)
+    visual:SetSize(LAYOUT.BUTTON_SIZE_COLLAPSED, LAYOUT.BUTTON_SIZE_COLLAPSED)
     button.visual = visual
 
     visual.shadow = visual:CreateTexture(nil, "BACKGROUND", nil, -1)
@@ -1362,7 +1364,7 @@ local function CreateActionButton(panelIndex, paddleIndex, panel)
 
     -- Button prompt shown on the focused bar, like the native ButtonIcon.
     visual.prompt = visual:CreateTexture(nil, "OVERLAY", nil, 2)
-    visual.prompt:SetSize(PROMPT_ICON_SIZE, PROMPT_ICON_SIZE)
+    visual.prompt:SetSize(LAYOUT.PROMPT_ICON_SIZE, LAYOUT.PROMPT_ICON_SIZE)
     visual.prompt:SetPoint("TOPRIGHT", -1, -1)
     ApplyArt(visual.prompt, string.format(ATLAS.paddlePrompt, paddleIndex), GetPaddleTexture(paddleIndex))
     visual.prompt:Hide()
@@ -1488,7 +1490,7 @@ local function CreateModifierIcon(panel, panelInfo)
     end
 
     frame:ClearAllPoints()
-    frame:SetPoint("CENTER", panel, "CENTER", 0, MODIFIER_ICON_Y)
+    frame:SetPoint("CENTER", panel, "CENTER", 0, LAYOUT.MODIFIER_ICON_Y)
     return frame
 end
 
@@ -1509,7 +1511,7 @@ local function SetPanelActiveVisual(panelIndex, isActive)
     local inactiveOpacity = PaddleSlotsDB.inactiveOpacity or 1.0
     panel:SetAlpha(IsEditable() and 1 or (isActive and 1 or inactiveOpacity))
 
-    panel.focusBackground:SetAlpha(FOCUS_BACKGROUND_ALPHA * (PaddleSlotsDB.highlightStrength or 1.0))
+    panel.focusBackground:SetAlpha(LAYOUT.FOCUS_BACKGROUND_ALPHA * (PaddleSlotsDB.highlightStrength or 1.0))
     panel.focusBackground:SetShown(isActive and highlightEnabled and panel.focusBackground.artAvailable)
 
     if panel.modifierIcon then
@@ -1541,13 +1543,13 @@ local function UpdateFocusFades()
     for panelIndex = 1, PANEL_COUNT do
         local panel = panelFrames[panelIndex]
         if panel and panel.focusFadeStart then
-            local progress = (now - panel.focusFadeStart) / FOCUS_FADE_DURATION
+            local progress = (now - panel.focusFadeStart) / LAYOUT.FOCUS_FADE_DURATION
             local alpha
             if progress >= 1 then
-                alpha = FOCUS_SHADOW_MIN_ALPHA
+                alpha = LAYOUT.FOCUS_SHADOW_MIN_ALPHA
                 panel.focusFadeStart = nil
             else
-                alpha = 1 - ((1 - FOCUS_SHADOW_MIN_ALPHA) * progress)
+                alpha = 1 - ((1 - LAYOUT.FOCUS_SHADOW_MIN_ALPHA) * progress)
             end
 
             for paddleIndex = 1, PADDLE_COUNT do
@@ -1576,7 +1578,7 @@ local function CreatePanelFrame(panelIndex)
     local panel = CreateFrame("Frame", "PaddleSlotsPanel" .. panelIndex, UIParent)
     panel.panelIndex = panelIndex
     panel.expanded = false
-    panel:SetSize(PANEL_WIDTH, PANEL_HEIGHT)
+    panel:SetSize(LAYOUT.PANEL_WIDTH, LAYOUT.PANEL_HEIGHT)
     panel:SetFrameStrata("LOW")
     -- The panels nest inside the native crossbar; keep them above its slots so
     -- an expanded paddle grid never disappears behind a native ring.
@@ -1588,11 +1590,11 @@ local function CreatePanelFrame(panelIndex)
 
     -- Soft highlight the native crossbar draws behind the focused bar.
     panel.focusBackground = panel:CreateTexture(nil, "BACKGROUND", nil, -2)
-    panel.focusBackground:SetSize(FOCUS_BACKGROUND_WIDTH, FOCUS_BACKGROUND_HEIGHT)
-    panel.focusBackground:SetPoint("CENTER", panel, "CENTER", 0, GRID_CENTER_Y)
+    panel.focusBackground:SetSize(LAYOUT.FOCUS_BACKGROUND_WIDTH, LAYOUT.FOCUS_BACKGROUND_HEIGHT)
+    panel.focusBackground:SetPoint("CENTER", panel, "CENTER", 0, LAYOUT.GRID_CENTER_Y)
     if not ApplyArt(panel.focusBackground, ATLAS.focusBackground, nil) then
         panel.focusBackground:SetColorTexture(0.68, 0.45, 0.08, 0.6)
-        panel.focusBackground:SetSize(PANEL_WIDTH - 20, PANEL_WIDTH - 20)
+        panel.focusBackground:SetSize(LAYOUT.PANEL_WIDTH - 20, LAYOUT.PANEL_WIDTH - 20)
         panel.focusBackground.artAvailable = true
     end
     panel.focusBackground:Hide()
@@ -1613,8 +1615,8 @@ local function CreatePanelFrame(panelIndex)
 
     panel.editOverlay.fill = panel.editOverlay:CreateTexture(nil, "BACKGROUND")
     if ApplyArt(panel.editOverlay.fill, ATLAS.editGlow, nil) then
-        panel.editOverlay.fill:SetSize(PANEL_WIDTH + 44, PANEL_WIDTH + 44)
-        panel.editOverlay.fill:SetPoint("CENTER", panel, "CENTER", 0, GRID_CENTER_Y)
+        panel.editOverlay.fill:SetSize(LAYOUT.PANEL_WIDTH + 44, LAYOUT.PANEL_WIDTH + 44)
+        panel.editOverlay.fill:SetPoint("CENTER", panel, "CENTER", 0, LAYOUT.GRID_CENTER_Y)
         panel.editOverlay.fill:SetAlpha(0.5)
     else
         panel.editOverlay.fill:SetAllPoints()
@@ -1640,7 +1642,7 @@ local function CreatePanelFrame(panelIndex)
     panel.editOverlay.right = CreateEdge({ point = "TOPRIGHT", x = 2, y = 2 }, { point = "BOTTOMRIGHT", x = 2, y = -2 }, false)
 
     panel.editOverlay.text = panel.editOverlay:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
-    panel.editOverlay.text:SetPoint("CENTER", panel, "CENTER", 0, GRID_CENTER_Y)
+    panel.editOverlay.text:SetPoint("CENTER", panel, "CENTER", 0, LAYOUT.GRID_CENTER_Y)
     panel.editOverlay.text:SetText(panelInfo.label .. "\nDRAG TO MOVE")
 
     panel.editOverlay:SetScript("OnDragStart", function()

@@ -3,6 +3,9 @@
 ## Notes: Xbox Elite paddle action panels styled after WoW: Forever's native gamepad crossbar.
 ## Author: SillyNameRandomNumber
 ## Version: 0.7.1
+## IconTexture: Interface\AddOns\PaddleSlots\Media\Icon.tga
+## X-Website: https://github.com/snrn-Pontus/PaddleSlots
+## X-Category: Action Bars
 ## SavedVariables: PaddleSlotsDB
 
 PaddleSlots.lua

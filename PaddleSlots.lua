@@ -127,7 +127,6 @@ local CAPTURE_TIMEOUT = 20
 
 local addon = CreateFrame("Frame")
 local secureDriver = CreateFrame("Frame", "PaddleSlotsSecureDriver", UIParent, "SecureHandlerStateTemplate")
-local root
 local panelFrames = {}
 local buttons = {}
 local editModeActive = false
@@ -1608,12 +1607,6 @@ local function CreatePanelFrame(panelIndex)
 end
 
 local function CreateUI()
-    -- Kept as a lightweight logical owner for backwards compatibility with
-    -- previous versions. The four visual panels are independent UIParent children.
-    root = CreateFrame("Frame", "PaddleSlotsRoot", UIParent)
-    root:SetSize(1, 1)
-    root:Hide()
-
     for panelIndex = 1, PANEL_COUNT do
         buttons[panelIndex] = {}
         CreatePanelFrame(panelIndex)

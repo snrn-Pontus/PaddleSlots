@@ -1,5 +1,10 @@
 # PaddleSlots changelog
 
+## 0.7.4 — DualSense Edge in the docs
+
+- The setup guide, README and addon summary now cover the PlayStation DualSense Edge. On PC its back buttons repeat face buttons until Steam Input or reWASD binds them to F13-F16, which is the same route the Xbox Elite uses. No PS5 is needed.
+- The in-game setup guide window is taller to fit the extra section.
+
 ## 0.7.3 — Fix 0.7.2 failing to load
 
 0.7.2 did not load at all: the file's main chunk exceeded Lua's limit of 200 local variables ("main function has more than 200 local variables"). The slot layout constants now live in one `LAYOUT` table, which brings the count back to 184. No behaviour change beyond the 0.7.2 fix finally taking effect.

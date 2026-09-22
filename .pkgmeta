@@ -1,8 +1,11 @@
 package-as: PaddleSlots
 
+# CurseForge automatic packaging. Dotfiles and this file are skipped by the
+# packager itself; everything listed here is kept in the repo but left out of
+# the zip that players install.
 ignore:
   - assets
   - screenshots
-  - .gitattributes
-  - .gitignore
-  - .pkgmeta
+  - CHANGELOG.md
+
+manual-changelog: CHANGELOG.md

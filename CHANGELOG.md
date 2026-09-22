@@ -1,5 +1,18 @@
 # PaddleSlots changelog
 
+## 0.7.2 — Secret cooldown values
+
+Fixes a Lua error that fired repeatedly in combat on Forever once a paddle slot held an action:
+
+```
+PaddleSlots.lua:802: attempt to compare local 'duration' (a secret number value ...)
+```
+
+Forever hands addons "secret" numbers for some combat data (cooldowns, usability, range). They can be passed to widgets such as `Cooldown:SetCooldown`, but comparing them raises an error.
+
+- **Cooldowns** now follow `Blizzard_ActionBar/ActionButton.lua`: the client's `isActive` flag decides whether a swipe is drawn and the timing values go to the Cooldown widget untouched. Applies to native storage slots and to fallback spell and item slots.
+- **Usable tint, stack count, and range dot** no longer inspect values the addon is not allowed to read. A secret usability answer leaves the icon untinted, a secret count is handed straight to the font string like the native buttons do, and a secret range answer hides the dot.
+
 ## 0.7.1 — Panels nested in the crossbar
 
 The default layout now puts each paddle panel inside the native crossbar, next to the bar that uses the same trigger combination, and the panels are anchored to `GamepadMainActionBarFrame` so they follow it if the crossbar is moved or scaled:

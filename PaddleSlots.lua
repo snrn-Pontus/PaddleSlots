@@ -184,6 +184,59 @@ local function SafeCall(func, ...)
     return a, b, c, d
 end
 
+-- Forever hands addons "secret" numbers and booleans for some combat data
+-- (cooldowns, usability, range). They can be passed straight to widgets such
+-- as Cooldown:SetCooldown or FontString:SetText, but comparing them, doing
+-- arithmetic on them, or using them as a condition raises a Lua error.
+local function IsSecret(value)
+    if type(issecretvalue) == "function" then
+        return issecretvalue(value) == true
+    end
+    -- Older clients have no predicate; probe with the operations a secret
+    -- value refuses. Nothing here touches the value outside the pcall.
+    local ok = pcall(function()
+        return value == nil or not value
+    end)
+    return not ok
+end
+
+-- Sets or clears a cooldown the way Blizzard_ActionBar/ActionButton.lua does:
+-- "active" is a plain boolean decided by the client, and the timing values are
+-- forwarded untouched so they may be secret. SetCooldown is the only thing
+-- allowed to look at them, so a rejected call simply clears the swipe.
+local function ApplyCooldown(cooldown, active, startTime, duration, modRate)
+    if IsSecret(active) then
+        active = true
+    end
+    if active then
+        local ok = pcall(cooldown.SetCooldown, cooldown, startTime, duration, modRate)
+        if ok then
+            return
+        end
+    end
+    if cooldown.Clear then
+        cooldown:Clear()
+    else
+        cooldown:SetCooldown(0, 0)
+    end
+end
+
+-- Turns a legacy (startTime, duration, enable) triple into the "active" flag
+-- used by ApplyCooldown. Secret values cannot be inspected, so they are
+-- handed to SetCooldown as-is; a zero duration renders as no cooldown.
+local function LegacyCooldownActive(startTime, duration, enable)
+    if IsSecret(enable) or IsSecret(duration) or IsSecret(startTime) then
+        return true
+    end
+    if startTime == nil or duration == nil then
+        return false
+    end
+    if enable == false or enable == 0 then
+        return false
+    end
+    return duration > 0
+end
+
 local function AtlasExists(name)
     if type(name) ~= "string" or not C_Texture or type(C_Texture.GetAtlasInfo) ~= "function" then
         return false
@@ -759,19 +812,19 @@ local function UpdateFallbackCooldown(button)
     end
 
     if action.kind == "spell" and C_Spell and C_Spell.GetSpellCooldown then
-        local info = C_Spell.GetSpellCooldown(action.id)
-        if info and info.startTime and info.duration and info.duration > 0 then
-            button.cooldown:SetCooldown(info.startTime, info.duration, info.modRate or 1)
+        local info = SafeCall(C_Spell.GetSpellCooldown, action.id)
+        if type(info) == "table" then
+            local active = info.isActive
+            if not IsSecret(active) and active == nil then
+                active = LegacyCooldownActive(info.startTime, info.duration, info.isEnabled)
+            end
+            ApplyCooldown(button.cooldown, active, info.startTime, info.duration, info.modRate)
         else
             ClearCooldown(button)
         end
     elseif action.kind == "item" and C_Item and C_Item.GetItemCooldown then
-        local startTime, duration, enabled = C_Item.GetItemCooldown(action.id)
-        if enabled and startTime and duration and duration > 0 then
-            button.cooldown:SetCooldown(startTime, duration)
-        else
-            ClearCooldown(button)
-        end
+        local startTime, duration, enabled = SafeCall(C_Item.GetItemCooldown, action.id)
+        ApplyCooldown(button.cooldown, LegacyCooldownActive(startTime, duration, enabled), startTime, duration)
     else
         ClearCooldown(button)
     end
@@ -784,26 +837,21 @@ local function UpdateNativeCooldown(button)
         return
     end
 
-    local startTime, duration, enable, modRate
-    if C_ActionBar.GetActionCooldown then
-        local info = C_ActionBar.GetActionCooldown(slot)
-        if type(info) == "table" then
-            startTime = info.startTime
-            duration = info.duration
-            enable = info.isEnabled and 1 or 0
-            modRate = info.modRate
-        else
-            startTime, duration, enable, modRate = GetActionCooldown(slot)
+    -- Mirrors ActionButton_ApplyCooldown: the client's isActive flag decides
+    -- whether a swipe is shown, and the (possibly secret) timing values are
+    -- handed to the Cooldown widget without being inspected.
+    local info = C_ActionBar.GetActionCooldown and SafeCall(C_ActionBar.GetActionCooldown, slot) or nil
+    if type(info) == "table" then
+        local active = info.isActive
+        if not IsSecret(active) and active == nil then
+            active = LegacyCooldownActive(info.startTime, info.duration, info.isEnabled)
         end
-    else
-        startTime, duration, enable, modRate = GetActionCooldown(slot)
+        ApplyCooldown(button.cooldown, active, info.startTime, info.duration, info.modRate)
+        return
     end
 
-    if startTime and duration and duration > 0 and enable ~= 0 then
-        button.cooldown:SetCooldown(startTime, duration, modRate or 1)
-    else
-        ClearCooldown(button)
-    end
+    local startTime, duration, enable, modRate = SafeCall(GetActionCooldown, slot)
+    ApplyCooldown(button.cooldown, LegacyCooldownActive(startTime, duration, enable), startTime, duration, modRate)
 end
 
 -- Native action buttons tint the icon when the action cannot be used
@@ -831,8 +879,11 @@ local function UpdateUsableTint(button, hasAction)
         end
     end
 
-    if isUsable == nil then
+    -- Usability may be secret in combat; a secret answer cannot be tested, so
+    -- the icon is left untinted rather than guessed.
+    if IsSecret(isUsable) or IsSecret(notEnoughMana) or isUsable == nil then
         isUsable = true
+        notEnoughMana = false
     end
 
     if isUsable then
@@ -941,12 +992,18 @@ local function UpdateButtonVisual(button)
     elseif button.actionData and button.actionData.kind == "item" and C_Item and type(C_Item.GetItemCount) == "function" then
         count = SafeCall(C_Item.GetItemCount, button.actionData.id)
     end
-    if type(count) == "number" and count <= 1 then
-        count = nil
-    elseif count == "" or count == "0" or count == "1" then
-        count = nil
+    if IsSecret(count) then
+        -- GetActionDisplayCount already returns display-ready text; the native
+        -- buttons pass it straight to SetText, which accepts secret values.
+        visual.count:SetText(count)
+    else
+        if type(count) == "number" and count <= 1 then
+            count = nil
+        elseif count == "" or count == "0" or count == "1" then
+            count = nil
+        end
+        visual.count:SetText(count and tostring(count) or "")
     end
-    visual.count:SetText(count and tostring(count) or "")
 
     SetRangeCheckEnabled(button, hasAction)
     if not hasAction then
@@ -2699,7 +2756,13 @@ local function PollRangeIndicators()
     ForEachButton(function(button)
         if button.rangeCheckEnabled and button.hasAction and button.actionSlot then
             local inRange = SafeCall(IsActionInRange, button.actionSlot)
-            UpdateRangeIndicator(button, inRange ~= nil, inRange == true)
+            if IsSecret(inRange) then
+                -- Range is secret for this action right now; hide the dot
+                -- rather than compare a value the addon may not read.
+                UpdateRangeIndicator(button, false, false)
+            else
+                UpdateRangeIndicator(button, inRange ~= nil, inRange == true)
+            end
         end
     end)
 end
@@ -3437,11 +3500,16 @@ addon:SetScript("OnEvent", function(_, event, arg1, arg2, arg3)
     end
 
     if event == "ACTION_RANGE_CHECK_UPDATE" then
-        local changedSlot = tonumber(arg1)
+        local changedSlot = not IsSecret(arg1) and tonumber(arg1) or nil
         if changedSlot then
+            local secret = IsSecret(arg2) or IsSecret(arg3)
             ForEachButton(function(button)
                 if button.actionSlot == changedSlot then
-                    UpdateRangeIndicator(button, arg3 == true, arg2 == true)
+                    if secret then
+                        UpdateRangeIndicator(button, false, false)
+                    else
+                        UpdateRangeIndicator(button, arg3 == true, arg2 == true)
+                    end
                 end
             end)
         end

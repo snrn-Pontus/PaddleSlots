@@ -42,9 +42,11 @@ local ATLAS = {
     focusBackground = "gamepad-actionbar-focus-bg-section",
     editGlow = "gamepad-actionbar-fx-controls-behind",
     circleMask = "CircleMask",
-    paddleGlyph = "Gamepad_Gen_Paddle%d_64",
-    paddlePrompt = "Gamepad_Gen_Paddle%d_32",
 }
+
+-- Paddle glyphs are the addon's own Media\P1-P4 textures: the native
+-- Gamepad_Gen_Paddle atlases are plain "P1" text, the addon draws each paddle's
+-- shape in the same button style.
 
 local NATIVE_CVAR_SCALING = "GamepadShowActionBarScaling"
 local NATIVE_CVAR_HIGHLIGHT = "GamepadShowActionBarHighlight"
@@ -1330,8 +1332,8 @@ local function CreateActionButton(panelIndex, paddleIndex, panel)
     -- Empty slots show the paddle glyph the way native slots show their face button.
     visual.emptyGlyph = visual:CreateTexture(nil, "ARTWORK", nil, 0)
     visual.emptyGlyph:SetPoint("CENTER")
-    ApplyArt(visual.emptyGlyph, string.format(ATLAS.paddleGlyph, paddleIndex), GetPaddleTexture(paddleIndex))
-    visual.emptyGlyph:SetVertexColor(0.82, 0.78, 0.70)
+    visual.emptyGlyph:SetTexture(GetPaddleTexture(paddleIndex))
+    visual.emptyGlyph.artAvailable = true
     visual.emptyGlyph:SetAlpha(0.9)
 
     visual.cooldown = CreateFrame("Cooldown", nil, visual, "CooldownFrameTemplate")
@@ -1366,7 +1368,8 @@ local function CreateActionButton(panelIndex, paddleIndex, panel)
     visual.prompt = visual:CreateTexture(nil, "OVERLAY", nil, 2)
     visual.prompt:SetSize(LAYOUT.PROMPT_ICON_SIZE, LAYOUT.PROMPT_ICON_SIZE)
     visual.prompt:SetPoint("TOPRIGHT", -1, -1)
-    ApplyArt(visual.prompt, string.format(ATLAS.paddlePrompt, paddleIndex), GetPaddleTexture(paddleIndex))
+    visual.prompt:SetTexture(GetPaddleTexture(paddleIndex))
+    visual.prompt.artAvailable = true
     visual.prompt:Hide()
 
     visual.count = visual:CreateFontString(nil, "OVERLAY", "NumberFontNormal")

@@ -1,5 +1,9 @@
 # PaddleSlots changelog
 
+## 0.7.5 — New paddle icons
+
+- New P1-P4 icons. Each shows its paddle's shape (P1/P2 the top levers, P3/P4 the bottom paddles, left and right) inside the same dark round button the crossbar uses for face buttons. Empty slots and the focused-panel prompts now use them instead of the native atlas, which only shows "P1" text.
+
 ## 0.7.4 — DualSense Edge in the docs
 
 - The setup guide, README and addon summary now cover the PlayStation DualSense Edge. On PC its back buttons repeat face buttons until Steam Input or reWASD binds them to F13-F16, which is the same route the Xbox Elite uses. No PS5 is needed.

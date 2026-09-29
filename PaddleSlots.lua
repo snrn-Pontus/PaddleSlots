@@ -3526,20 +3526,11 @@ local function RegisterSettings()
 
     AddButton(
         "Gamepad integration",
-        "Print Diagnostics",
-        function()
-            PrintDiagnostics()
-        end,
-        "Prints native storage, LT/RT detection, and native art status to the chat frame. Same as /paddles diag."
-    )
-
-    AddButton(
-        "Copyable report",
         "View Diagnostics",
         function()
             ShowDiagnosticsFrame()
         end,
-        "Opens the same report as /paddles diag as plain text you can select and copy (Ctrl+C) into a bug report. Same as /paddles diag copy."
+        "Shows native storage, LT/RT detection, and native art status as plain text you can select and copy (Ctrl+C) into a bug report. Same as /paddles diag copy; /paddles diag prints it to chat."
     )
 
     content:SetHeight(-y + 10)

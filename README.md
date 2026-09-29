@@ -1,3 +1,5 @@
+> **This addon is now [SNRN Backhand](https://github.com/snrn-Pontus/Backhand).** This repository is archived; new releases, issues and the full history live there.
+
 # PaddleSlots
 
 Rear-paddle action panels for **WoW: Forever**, nested in the native gamepad crossbar. Built for the Xbox Elite Series 2; also works with the PlayStation DualSense Edge and any other controller whose extra buttons can be mapped to keys on PC.
